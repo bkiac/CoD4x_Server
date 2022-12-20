@@ -1,28 +1,36 @@
-FROM debian:stretch-slim
+FROM unitymultiplay/linux-base-image:1.0.1
 
-## VARIABLES
-ENV MAX_PLAYERS=22
+# Variables
+ENV MAX_PLAYERS=12
 ENV MAIN_SHARED=
 ENV FS_GAME=
-ENV CONFIG=
+ENV CONFIG=server.cfg
 ENV ARGS=
 
+# Install dependencies.
+USER root
 RUN dpkg --add-architecture i386 && \
     apt-get update && \
     apt-get install -y lib32stdc++6
+USER mpukgame
 
-COPY bin/ cod4x-server
+# Copy game files
+COPY --chown=mpukgame bin/ cod4x-server
 RUN chmod +x cod4x-server/cod4x18_dedrun
-RUN groupadd -r cod && useradd --no-log-init -r -g cod cod
-
-RUN chown -R cod:cod cod4x-server
 
 RUN mkdir cod4x-server/main
-RUN chown -R cod:cod cod4x-server/main
 
-VOLUME /cod4x-server-base/main /cod4x-server-base/zone /cod4x-server/plugins /cod4x-server/mods
 EXPOSE 28960
-USER cod
 
-ENTRYPOINT cd cod4x-server && ./cod4x18_dedrun +set net_port 28960 +map mp_killhouse +set sv_maxclients $MAX_PLAYERS +set fs_homepath . +set fs_basepath ../cod4x-server-base +set fs_game "$FS_GAME" +exec "$CONFIG" $ARGS
-#ENTRYPOINT /bin/bash
+ENTRYPOINT cd cod4x-server && ./cod4x18_dedrun \
+    +set net_port 28960 \
+    +set dedicated 1 \
+    +set sv_punkbuster 0 \
+    +set sv_maxclients $MAX_PLAYERS \
+    +set sv_cheats 0 \
+    +map_rotate \
+    +set fs_homepath . \
+    +set fs_basepath ../cod4x-server-base \
+    +set fs_game "$FS_GAME" \
+    +exec "$CONFIG" \
+    $ARGS
