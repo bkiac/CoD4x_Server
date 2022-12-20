@@ -62,3 +62,7 @@ sys_error.txt
 
 # MacOS
 .DS_Store
+
+# generated files in mounted volumes
+q3config_server.cfg
+qconsole.log.old
