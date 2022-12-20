@@ -3,7 +3,7 @@ FROM unitymultiplay/linux-base-image:1.0.1
 # Variables
 ENV MAX_PLAYERS=12
 ENV MAIN_SHARED=
-ENV FS_GAME=
+ENV FS_GAME=mods/fps_promod_240
 ENV CONFIG=server.cfg
 ENV ARGS=
 
